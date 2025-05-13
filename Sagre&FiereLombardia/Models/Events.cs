@@ -5,17 +5,17 @@ namespace Sagre_FiereLombardia.Models
 
     public class Events
     {
-        public Event[] events {  get; set; }
+        public Event[]? events {  get; set; }
     }
 
     public class Event
     {
 
         [JsonPropertyName("id")]
-        public string ID {get; set;}
+        public string? ID {get; set;}
 
         [JsonPropertyName("denom")]
-        public string NomeEvento { get; set; }
+        public string? NomeEvento { get; set; }
 
         [JsonPropertyName("tipo")]
         public string? TipoEvento { get; set; }
@@ -61,8 +61,6 @@ namespace Sagre_FiereLombardia.Models
         public string? URL { get; set; }
 
         public GeoPoint? geopoint { get; set; }
-
-        //Ciao sono un commento
     }
 
     public class GeoPoint
