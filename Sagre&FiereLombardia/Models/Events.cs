@@ -62,6 +62,7 @@ namespace Sagre_FiereLombardia.Models
 
         public GeoPoint? geopoint { get; set; }
 
+        //Ciao sono un commento
     }
 
     public class GeoPoint
