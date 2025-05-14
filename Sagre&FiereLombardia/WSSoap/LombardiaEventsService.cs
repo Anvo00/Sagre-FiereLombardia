@@ -9,21 +9,21 @@ namespace Sagre_FiereLombardia.WSSoap
     {
         [OperationContract]
         // TODO Capire perché non si usa l'array (rivedere, nel caso, il modello)
-        public Events GetAllEvents();
+        public List<Event> GetAllEvents();
 
         [OperationContract]
-        public Events[] GetFilteredEvents(string Filter);
+        public List<Event> GetFilteredEvents(string propertyName, string queryParam);
 
     }
 
     public class LombardiaEventsService : ILombardiaEventsService
     {
-        public Events GetAllEvents()
+        public List<Event> GetAllEvents()
         {
             return EventService.FetchEventsAsync().Result;
         }
 
-        public Events[] GetFilteredEvents(string Filter)
+        public List<Event> GetFilteredEvents(string propertyName, string queryParam)
         {
             throw new NotImplementedException();
 

@@ -3,11 +3,6 @@
 namespace Sagre_FiereLombardia.Models
 {
 
-    public class Events
-    {
-        public Event[]? events {  get; set; }
-    }
-
     public class Event
     {
 
