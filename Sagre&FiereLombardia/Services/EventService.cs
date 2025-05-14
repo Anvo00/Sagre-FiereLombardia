@@ -6,7 +6,7 @@ namespace Sagre_FiereLombardia.Services
 {
     public class EventService
     {
-        public static async Task<Events> FetchEventsAsync(string propertyName = "", string queryParam = "")
+        public static async Task<List<Event>> FetchEventsAsync(string propertyName = "", string queryParam = "")
         {
             // Endpoint API in JSON
             string BaseURI = "https://www.dati.lombardia.it/resource/hs8z-dcey.json";
@@ -15,7 +15,7 @@ namespace Sagre_FiereLombardia.Services
             // Aggiunge dei parametri di query all'URI
             if (!string.IsNullOrWhiteSpace(propertyName) && !string.IsNullOrWhiteSpace(queryParam))
             {
-                BaseURI += $"?{propertyName}={queryParam}";
+                BaseURI += $"?{propertyName}={Uri.EscapeDataString(queryParam)}";
             }
 
             // Crea un'istanza di un Client HTTP per effettuare la richiesta
