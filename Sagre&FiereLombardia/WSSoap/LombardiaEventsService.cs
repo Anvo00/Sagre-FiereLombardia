@@ -19,7 +19,7 @@ namespace Sagre_FiereLombardia.WSSoap
     {
         public List<Event> GetAllEvents()
         {
-            return EventService.FetchEventsAsync().Result;
+            return EventService.FetchEventsAsync().ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
         public List<Event> GetFilteredEvents(string propertyName, string queryParam)
