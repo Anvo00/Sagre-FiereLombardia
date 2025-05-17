@@ -21,7 +21,7 @@ namespace Sagre_FiereLombardia
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Event/Error");
             }
             app.UseStaticFiles();
 

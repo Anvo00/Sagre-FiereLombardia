@@ -6,17 +6,13 @@ namespace Sagre_FiereLombardia.Services
 {
     public class EventService
     {
-        public static async Task<List<Event>> FetchEventsAsync(string propertyName = "", string queryParam = "")
+        public static async Task<List<Event>> FetchEventsAsync()
         {
             // Endpoint API in JSON
-            string BaseURI = "https://www.dati.lombardia.it/resource/hs8z-dcey.json";
+            string BaseURI = "https://www.dati.lombardia.it/resource/hs8z-dcey.json?filter=5000";
+            // Il limite è di 5000 in quanto il numero di eventi si aggira attorno ai 2500 e tenendo conto dell'eliminazione
+            // di eventi passati per l'aggiunta di quelli nuovi nel caso peggiore non supererebbe i 5000 circa
 
-
-            // Aggiunge dei parametri di query all'URI
-            if (!string.IsNullOrWhiteSpace(propertyName) && !string.IsNullOrWhiteSpace(queryParam))
-            {
-                BaseURI += $"?{propertyName}={Uri.EscapeDataString(queryParam)}";
-            }
 
             // Crea un'istanza di un Client HTTP per effettuare la richiesta
             var client = new HttpClient();
