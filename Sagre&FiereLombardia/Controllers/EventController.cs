@@ -10,78 +10,92 @@ namespace Sagre_FiereLombardia.Controllers
     {
         // Crea un'istanza con Dependency Iniection
         private readonly ILombardiaEventsService _lEventService;
-        private List<string> listaComuni;
-        private List<string> listaComuniSelezionati;
+        private List<string> listComuni;
+        private string selectedComune = "";
+        private List<Event> events;
 
         public EventController(ILombardiaEventsService eventService)
         {
             _lEventService = eventService;
-            listaComuni = new List<string>();
+            listComuni = new List<string>();
+            events = new List<Event>();
         }
 
         // Mostra tutti gli eventi
         public IActionResult Index(string searchQuery = null, string filterComune = "")
         {
             try {
-                List<Event> events = _lEventService.GetAllEvents();
+
+                // Popolazione della lista degli eventi con tutti gli eventi disponibili nel dataset
+                events = _lEventService.GetAllEvents();
 
                 // TODO Contare gli eventi per mettere un limite di visualizzazione (pagine come google)
+                int nEvents = events.Count;
+                // ...
 
-                /*
-                if (!string.IsNullOrEmpty(filterComune)) {
-                    
-                }
-
-          
-
-                if(string.IsNullOrWhiteSpace(searchQuery)) {
-                    events = _lEventService.GetAllEvents();
-                    
-                } else {
-
-                }
-                */
-
-                if(filterComune != "")
+                // Popolazione della lista dei comuni con tutti i comuni disponibili nel dataset
+                foreach (Event e in events)
                 {
-                    // filtra la lista comuni
-                    // mette i comuni filtrati dentro lista comuni
-                    listaComuni.Add(filterComune);
+                    listComuni.Add(e.Comune);
                 }
 
-                if(listaComuniSelezionati.Count > 0)
+                // OPPURE
+                // listComuni = events.Select(e => e.Comune).Distinct().ToList();
+               
+
+                // Ricerca e visualizzazione della lista dei comuni con filtro
+                // TODO Mettere un massimo di comuni visualizzati nella lista
+                if (!string.IsNullOrEmpty(filterComune))
                 {
-                    //fare il filtro deglie eventi
+                    // Filtra la lista dei comuni in base alla ricerca dell'utente
+                    listComuni = listComuni.Where(c => 
+                        c.Replace(" ","").StartsWith(filterComune.Replace(" ",""), StringComparison.OrdinalIgnoreCase)).ToList();
+                    // Replace(" ","") -> ignora gli spazi
                 }
 
+                // Controlla se c'è un comune selezionato e filtra tutti gli eventi
+                if (!string.IsNullOrEmpty(selectedComune))
+                {
+                    events = events.Where(e => 
+                        e.Comune.StartsWith(selectedComune, StringComparison.OrdinalIgnoreCase)).ToList();
+                }
+
+                // Controlla se c'è un input nella barra di ricerca degli eventi
+                // Se la lista è già stata filtrata per comune, allora esegue una ricerca sulla lista filtrata, su tutto altrimenti
                 if (!string.IsNullOrEmpty(searchQuery)) {
-                    events = events.Where(e => e.NomeEvento.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)).ToList();
+                    events = events.Where(e => 
+                        e.NomeEvento.Replace(" ","").StartsWith(searchQuery.Replace(" ",""), StringComparison.OrdinalIgnoreCase)).ToList();
                 }
+
+                // Salva i risultati filtrati nella ViewBag
+                ViewBag.filteredEvents = events;
+                ViewBag.listComuni = listComuni;  // Serve??
 
                 // Salva i parametri di filtro nella ViewBag
                 ViewBag.SearchQuery = searchQuery;
-                ViewBag.listaComuni = listaComuni;
+                ViewBag.selectedComune = selectedComune;  // Serve??
+                // ...
+
                 return View();
             } 
             catch (Exception ex){
-                // TODO Implementare
 
+                // Codice preso dal progetto degli altri - CONTROLLARE!!!
                 ViewBag.Error = "Si è verificato un errore imprevisto: " + ex.Message;
+                ViewBag.filteredEvent = new List<Event>();
+                ViewBag.listComuni = new List<string>();
 
                 return View();
             }
         }
 
-        //Mettere chiamata a task che avviene quando si preme un bottone di un comune, nella task non ritornare dati ma settare un parametro nella classe che dice quali comuni sono selezionati
+        // Mettere chiamata a task che avviene quando si preme un bottone di un comune,
+        // nella task non ritornare dati ma settare un parametro nella classe che dice quali comuni sono selezionati
         [HttpGet]
-        public Task<bool> OnComuneSelezionato(string comuneCliccato)
+        public Task<bool> selectComune(string checkedComune)
         {
-            if(listaComuni.Contains(comuneCliccato))
-            {
-                listaComuniSelezionati.Add(comuneCliccato);
-                return true;
-            }
-            return false;
+            // TODO Implementare
+            return null;
         }
     }
 }

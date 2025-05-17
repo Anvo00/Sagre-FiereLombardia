@@ -10,8 +10,11 @@ namespace Sagre_FiereLombardia.WSSoap
         [OperationContract]
         public List<Event> GetAllEvents();
 
+        /* SERVE REALMENTE????
+         * 
         [OperationContract]
         public List<Event> GetFilteredEventsByComune(string queryParam);
+        */
 
     }
 
@@ -22,10 +25,13 @@ namespace Sagre_FiereLombardia.WSSoap
             return EventService.FetchEventsAsync().ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
+        /* SERVE REALMENTE????
+         * 
         public List<Event> GetFilteredEventsByComune(string queryParam)
         {
             List<Event> events = GetAllEvents();
             return null;
         }
+        */
     }
 }
