@@ -22,13 +22,8 @@ namespace Sagre_FiereLombardia.Controllers
         }
 
         // Mostra tutti gli eventi
-        public IActionResult Index(string searchQuery = null, string filterComune = "")
+        public IActionResult Index(string searchQuery = "", string filterComune = "")
         {
-            // Aggiungo i dati e i parametri nel ViewBag
-            ViewBag.filteredEvents = new List<Event>();
-            ViewBag.listComuni = new List<string>();
-            ViewBag.SearchQuery = searchQuery;
-            ViewBag.selectedComune = selectedComune;
 
             try {
 
@@ -74,16 +69,23 @@ namespace Sagre_FiereLombardia.Controllers
                 ViewBag.filteredEvents = events;
                 ViewBag.listComuni = listComuni;
 
+                // Salva i parametri nella ViewBag
+                ViewBag.searchQuery = searchQuery;
+                ViewBag.selectedComune = selectedComune; // Serve??
+                ViewBag.filterComune = filterComune; // Serve??
+
+                return View();
+
             } 
             catch (Exception ex){
 
                 // Codice preso dal progetto degli altri - CONTROLLARE!!!
                 ViewBag.Error = "Si è verificato un errore imprevisto: " + ex.Message;
+                ViewBag.filteredEvents = new List<Event>();
+                ViewBag.listComuni = new List<string>();
 
-                // Mettere un return view anche qui?? 
+                return View();
             }
-
-            return View();
         }
 
         // Mettere chiamata a task che avviene quando si preme un bottone di un comune,

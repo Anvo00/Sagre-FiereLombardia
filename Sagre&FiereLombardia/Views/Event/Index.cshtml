@@ -1,11 +1,22 @@
 ﻿@{
-    ViewData["Title"] = "Home";
-    var eventList = ViewBag.filteredEvents as List<Event>; 
-    var comuni = ViewBag.listComuni as List<string>;
-    Layout = null; 
+    Layout = null;
+    var eventList = ViewBag.filteredEvents as List<Event>;
+    var listComuni = ViewBag.listComuni as List<string>;
 }
 
-@if (ViewBag.Error != null)
-{
-    <p style="color:red">@ViewBag.Error</p>
+<h2>Lista comuni</h2>
+
+<!-- Form per inserire ricerca + pulsante per passare il dato -->
+<form asp-controller="Event" asp-action="Index" method="get">
+    <input type="text" name="filterComune" placeholder="Cerca comune..." value="@ViewBag.filterComune" />
+    <button type="submit">Filtra</button>
+</form>
+
+<!-- Stampa della lista -->
+@if (listComuni != null && listComuni.Any()){
+    @foreach(string comune in listComuni){
+        <p>@comune</p>
+    }
+} else {
+    <p style="color:red"> Nessun comune trovato </p>
 }
