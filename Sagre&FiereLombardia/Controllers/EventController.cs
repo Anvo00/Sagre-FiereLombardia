@@ -24,6 +24,12 @@ namespace Sagre_FiereLombardia.Controllers
         // Mostra tutti gli eventi
         public IActionResult Index(string searchQuery = null, string filterComune = "")
         {
+            // Aggiungo i dati e i parametri nel ViewBag
+            ViewBag.filteredEvents = new List<Event>();
+            ViewBag.listComuni = new List<string>();
+            ViewBag.SearchQuery = searchQuery;
+            ViewBag.selectedComune = selectedComune;
+
             try {
 
                 // Popolazione della lista degli eventi con tutti gli eventi disponibili nel dataset
@@ -34,17 +40,14 @@ namespace Sagre_FiereLombardia.Controllers
                 // ...
 
                 // Popolazione della lista dei comuni con tutti i comuni disponibili nel dataset
-                foreach (Event e in events)
-                {
-                    listComuni.Add(e.Comune);
-                }
+                // TODO Mettere un massimo di comuni visualizzati nella lista
 
-                // OPPURE
-                // listComuni = events.Select(e => e.Comune).Distinct().ToList();
-               
+                listComuni = events.Select(e => e.Comune).Distinct().ToList();
+                // Alternativa con foreach (commentato)
+                // foreach (Event e in events) {listComuni.Add(e.Comune);}
+
 
                 // Ricerca e visualizzazione della lista dei comuni con filtro
-                // TODO Mettere un massimo di comuni visualizzati nella lista
                 if (!string.IsNullOrEmpty(filterComune))
                 {
                     // Filtra la lista dei comuni in base alla ricerca dell'utente
@@ -69,24 +72,18 @@ namespace Sagre_FiereLombardia.Controllers
 
                 // Salva i risultati filtrati nella ViewBag
                 ViewBag.filteredEvents = events;
-                ViewBag.listComuni = listComuni;  // Serve??
+                ViewBag.listComuni = listComuni;
 
-                // Salva i parametri di filtro nella ViewBag
-                ViewBag.SearchQuery = searchQuery;
-                ViewBag.selectedComune = selectedComune;  // Serve??
-                // ...
-
-                return View();
             } 
             catch (Exception ex){
 
                 // Codice preso dal progetto degli altri - CONTROLLARE!!!
                 ViewBag.Error = "Si è verificato un errore imprevisto: " + ex.Message;
-                ViewBag.filteredEvent = new List<Event>();
-                ViewBag.listComuni = new List<string>();
 
-                return View();
+                // Mettere un return view anche qui?? 
             }
+
+            return View();
         }
 
         // Mettere chiamata a task che avviene quando si preme un bottone di un comune,
