@@ -2,24 +2,83 @@
     var eventList = ViewBag.filteredEvents as List<Event>;
     var listComuni = ViewBag.listComuni as List<string>;
 }
+<div class="d-flex flex-column align-items-center justify-content-center">
+    <div class="row w-100">
 
-<h2>Lista eventi</h2>
+        @* Sezione eventi *@
+        <div class="col-8 mt-4 bg-dark">
+            <div class="card mt-2">
+                <div class="card-header">
+                    <!-- Barra di ricerca eventi -->
+                    <div class="row mt-2">
+                        <form class="d-flex" id="searchForm" asp-controller="Event" asp-action="Index" method="get">
+                            <input class="form-control form-control-md" type="text" name="searchQuery" placeholder="Cerca evento" value="@ViewBag.searchQuery" aria-label="Cerca evento" />
+                            <input type="hidden" name="selectedComune" value="@ViewBag.selectedComune" />
+                            <button class="btn" style="background-color: mediumpurple; color:white;" type="submit">Cerca</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Griglia eventi filtrati -->
+                    @if(eventList != null && eventList.Any())
+                    {
+                        @foreach(Event evento in eventList)
+                        {
+                            @evento.NomeEvento
+                        }
+                    }
 
-<!-- Form per inserire ricerca + pulsante per passare il dato -->
-<form asp-controller="Event" asp-action="Index" method="get">
-    <input type="text" name="searchQuery" placeholder="Cerca evento..." value="@ViewBag.searchQuery" />
-    <button type="submit">Filtra</button>
-</form>
+                </div>
+            </div>
+        </div>
 
-<!-- Stampa della lista -->
-@if (eventList != null && eventList.Any())
-{
-    @foreach (Event evento in eventList)
-    {
-        <p>@evento.NomeEvento</p>
-    }
-}
-else
-{
-    <p style="color:red"> Nessun evento trovato </p>
-}
+        
+
+        @* Sezione comuni *@
+        <div class="col mt-4 bg-dark">
+
+            <div class="card mt-2">
+                <div class="card-header">
+                    <h2>Comuni</h2>
+                </div>
+                <div class="card-body">
+
+                    <!-- Barra di ricerca comuni -->
+                    <form class="d-flex" id="searchFormComune" asp-controller="Event" asp-action="Index" method="get">
+                        <input class="form-control" type="text" name="filterComune" placeholder="Cerca comune" value="@ViewBag.filterComune" aria-label="Cerca comune" />
+
+                        <!-- [TODO] Capire se mettere queste linee di codice -->
+                        <!-- <input type="hidden" name="selectedComune" value="@ViewBag.selectedComune" /> -->
+                        <!-- <input type="hidden" name="searchQuery" value="@ViewBag.searchQuery" /> -->
+
+                        <button class="btn" style="background-color: mediumpurple; color:white;" type="submit">Filtra</button>
+                    </form>
+
+                    <div>
+                        <!-- List comuni filtrati -->
+                        <!-- [TODO] Inserire un limite visualizzabile dei comuni e lo scorrimento -->
+                        @if (listComuni != null && listComuni.Any())
+                        {
+                            @foreach (string comune in listComuni)
+                            {
+                                <p>@comune</p>
+                            }
+                        }
+                        else
+                        {
+                            <p style="color:red"> Nessun comune trovato </p>
+                        }
+                    </div>
+                    
+                </div>
+            </div>
+
+            
+            
+                 
+            
+
+            
+        </div>
+    </div>
+</div>

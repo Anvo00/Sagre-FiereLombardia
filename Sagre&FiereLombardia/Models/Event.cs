@@ -7,7 +7,7 @@ namespace Sagre_FiereLombardia.Models
     {
 
         [JsonProperty("id")]
-        public string? ID {get; set;}
+        public string? ID { get; set; }
 
         [JsonProperty("denom")]
         public string? NomeEvento { get; set; }
@@ -50,10 +50,6 @@ namespace Sagre_FiereLombardia.Models
 
         [JsonProperty("nome_org")]
         public string? Organizzazione { get; set; }
-
-        // Controllare il link
-        [JsonProperty("url_programma")]
-        public string? URL { get; set; }
 
         public GeoPoint? geopoint { get; set; }
     }

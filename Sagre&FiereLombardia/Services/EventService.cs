@@ -30,8 +30,15 @@ namespace Sagre_FiereLombardia.Services
             // Traduce il contenuto della risposta in una stringa
             string contents = await response.Content.ReadAsStringAsync();
 
+            try
+            {
+                return JsonConvert.DeserializeObject<List<Event>>(contents);
+
+            } catch(Exception e)
+            {
+                throw new Exception($"Si è verificato il seguente errore : {e.Message}");
+            }
             // Deserializza il contenuto JSON in un oggetto Events
-            return JsonConvert.DeserializeObject<List<Event>>(contents);
         }
     }
 }
