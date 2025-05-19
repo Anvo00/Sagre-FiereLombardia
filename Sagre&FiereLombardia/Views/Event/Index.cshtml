@@ -1,17 +1,25 @@
 ﻿@{
-    Layout = null;
     var eventList = ViewBag.filteredEvents as List<Event>;
     var listComuni = ViewBag.listComuni as List<string>;
 }
 
-<div class="main-container" style="display: flex; flex-direction: row; gap: 20px; padding: 20px;">
-    <!-- COLONNA SINISTRA: Ricerca + Eventi + Paginazione -->
-    <div style="flex: 3;">
+<h2>Lista eventi</h2>
 
-        <!-- Barra di ricerca evento -->
-        <form asp-action="Index" method="get" style="display: flex; align-items: center; gap: 10px;">
-            <input type="text" name="searchQuery" value="@ViewBag.searchQuery" placeholder="Cerca evento"
-                   style="padding: 3px; font-size: 0.8em;" />
-            <button type="submit" style="padding: 5px 10px;">Filtra</button>
-        </form>
-</div>
+<!-- Form per inserire ricerca + pulsante per passare il dato -->
+<form asp-controller="Event" asp-action="Index" method="get">
+    <input type="text" name="searchQuery" placeholder="Cerca evento..." value="@ViewBag.searchQuery" />
+    <button type="submit">Filtra</button>
+</form>
+
+<!-- Stampa della lista -->
+@if (eventList != null && eventList.Any())
+{
+    @foreach (Event evento in eventList)
+    {
+        <p>@evento.NomeEvento</p>
+    }
+}
+else
+{
+    <p style="color:red"> Nessun evento trovato </p>
+}

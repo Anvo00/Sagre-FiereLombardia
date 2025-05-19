@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using Sagre_FiereLombardia.Models;
-using System.Text.Json.Serialization;
 
 namespace Sagre_FiereLombardia.Services
 {

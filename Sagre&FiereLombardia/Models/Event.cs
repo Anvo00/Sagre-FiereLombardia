@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
 
 namespace Sagre_FiereLombardia.Models
 {
@@ -6,53 +6,53 @@ namespace Sagre_FiereLombardia.Models
     public class Event
     {
 
-        [JsonPropertyName("id")]
+        [JsonProperty("id")]
         public string? ID {get; set;}
 
-        [JsonPropertyName("denom")]
+        [JsonProperty("denom")]
         public string? NomeEvento { get; set; }
 
-        [JsonPropertyName("tipo")]
+        [JsonProperty("tipo")]
         public string? TipoEvento { get; set; }
 
-        [JsonPropertyName("n_ediz")]
+        [JsonProperty("n_ediz")]
         public string? Edizione { get; set; }
 
-        [JsonPropertyName("data_in")]
+        [JsonProperty("data_in")]
         public DateTime? DataInizio { get; set; }
 
-        [JsonPropertyName("ora_in")]
+        [JsonProperty("ora_in")]
         public string? OraInzio { get; set; }
 
-        [JsonPropertyName("data_fine")]
+        [JsonProperty("data_fine")]
         public DateTime? DataFine { get; set; }
 
-        [JsonPropertyName("ora_fine")]
+        [JsonProperty("ora_fine")]
         public string? OraFine { get; set; }
 
-        [JsonPropertyName("anno")]
+        [JsonProperty("anno")]
         public string? Anno { get; set; }
 
-        [JsonPropertyName("prov")]
+        [JsonProperty("prov")]
         public string? Provincia { get; set; }
 
-        [JsonPropertyName("comune")]
+        [JsonProperty("comune")]
         public string? Comune { get; set; }
 
-        [JsonPropertyName("toponimo")]
+        [JsonProperty("toponimo")]
         public string? Toponimo { get; set; }
 
-        [JsonPropertyName("indirizzo")]
+        [JsonProperty("indirizzo")]
         public string? Indirizzo { get; set; }
 
-        [JsonPropertyName("cap")]
+        [JsonProperty("cap")]
         public string? CAP { get; set; }
 
-        [JsonPropertyName("nome_org")]
+        [JsonProperty("nome_org")]
         public string? Organizzazione { get; set; }
 
         // Controllare il link
-        [JsonPropertyName("url_programma")]
+        [JsonProperty("url_programma")]
         public string? URL { get; set; }
 
         public GeoPoint? geopoint { get; set; }
@@ -60,10 +60,10 @@ namespace Sagre_FiereLombardia.Models
 
     public class GeoPoint
     {
-        [JsonPropertyName("geo_x")]
+        [JsonProperty("geo_x")]
         public double? Latitude { get; set; }
 
-        [JsonPropertyName("geo_y")]
+        [JsonProperty("geo_y")]
         public double? Longitude { get; set; }
     }
 }
