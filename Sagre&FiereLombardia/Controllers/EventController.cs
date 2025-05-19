@@ -22,10 +22,11 @@ namespace Sagre_FiereLombardia.Controllers
         }
 
         // Mostra tutti gli eventi
-        public IActionResult Index(string searchQuery = "", string filterComune = "")
+        public IActionResult Index(string searchQuery = "", string filterComune = "", string selectedComune = "")
         {
 
-            try {
+            try
+            {
 
                 // Popolazione della lista degli eventi con tutti gli eventi disponibili nel dataset
                 events = _lEventService.GetAllEvents();
@@ -46,23 +47,24 @@ namespace Sagre_FiereLombardia.Controllers
                 if (!string.IsNullOrEmpty(filterComune))
                 {
                     // Filtra la lista dei comuni in base alla ricerca dell'utente
-                    listComuni = listComuni.Where(c => 
-                        c.Replace(" ","").StartsWith(filterComune.Replace(" ",""), StringComparison.OrdinalIgnoreCase)).ToList();
+                    listComuni = listComuni.Where(c =>
+                        c.Replace(" ", "").StartsWith(filterComune.Replace(" ", ""), StringComparison.OrdinalIgnoreCase)).ToList();
                     // Replace(" ","") -> ignora gli spazi
                 }
 
                 // Controlla se c'è un comune selezionato e filtra tutti gli eventi
                 if (!string.IsNullOrEmpty(selectedComune))
                 {
-                    events = events.Where(e => 
+                    events = events.Where(e =>
                         e.Comune.StartsWith(selectedComune, StringComparison.OrdinalIgnoreCase)).ToList();
                 }
 
                 // Controlla se c'è un input nella barra di ricerca degli eventi
                 // Se la lista è già stata filtrata per comune, allora esegue una ricerca sulla lista filtrata, su tutto altrimenti
-                if (!string.IsNullOrEmpty(searchQuery)) {
-                    events = events.Where(e => 
-                        e.NomeEvento.Replace(" ","").StartsWith(searchQuery.Replace(" ",""), StringComparison.OrdinalIgnoreCase)).ToList();
+                if (!string.IsNullOrEmpty(searchQuery))
+                {
+                    events = events.Where(e =>
+                        e.NomeEvento.Replace(" ", "").StartsWith(searchQuery.Replace(" ", ""), StringComparison.OrdinalIgnoreCase)).ToList();
                 }
 
                 // Salva i risultati filtrati nella ViewBag
@@ -76,8 +78,9 @@ namespace Sagre_FiereLombardia.Controllers
 
                 return View();
 
-            } 
-            catch (Exception ex){
+            }
+            catch (Exception ex)
+            {
 
                 // Codice preso dal progetto degli altri - CONTROLLARE!!!
                 ViewBag.Error = "Si è verificato un errore imprevisto: " + ex.Message;
@@ -86,15 +89,6 @@ namespace Sagre_FiereLombardia.Controllers
 
                 return View();
             }
-        }
-
-        // Mettere chiamata a task che avviene quando si preme un bottone di un comune,
-        // nella task non ritornare dati ma settare un parametro nella classe che dice quali comuni sono selezionati
-        [HttpGet]
-        public Task<bool> selectComune(string checkedComune)
-        {
-            // TODO Implementare
-            return null;
         }
     }
 }

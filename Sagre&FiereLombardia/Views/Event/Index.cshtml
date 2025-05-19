@@ -4,19 +4,14 @@
     var listComuni = ViewBag.listComuni as List<string>;
 }
 
-<h2>Lista comuni</h2>
+<div class="main-container" style="display: flex; flex-direction: row; gap: 20px; padding: 20px;">
+    <!-- COLONNA SINISTRA: Ricerca + Eventi + Paginazione -->
+    <div style="flex: 3;">
 
-<!-- Form per inserire ricerca + pulsante per passare il dato -->
-<form asp-controller="Event" asp-action="Index" method="get">
-    <input type="text" name="filterComune" placeholder="Cerca comune..." value="@ViewBag.filterComune" />
-    <button type="submit">Filtra</button>
-</form>
-
-<!-- Stampa della lista -->
-@if (listComuni != null && listComuni.Any()){
-    @foreach(string comune in listComuni){
-        <p>@comune</p>
-    }
-} else {
-    <p style="color:red"> Nessun comune trovato </p>
-}
+        <!-- Barra di ricerca evento -->
+        <form asp-action="Index" method="get" style="display: flex; align-items: center; gap: 10px;">
+            <input type="text" name="searchQuery" value="@ViewBag.searchQuery" placeholder="Cerca evento"
+                   style="padding: 3px; font-size: 0.8em;" />
+            <button type="submit" style="padding: 5px 10px;">Filtra</button>
+        </form>
+</div>
