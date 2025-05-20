@@ -11,11 +11,8 @@
 
 <!-- [TODO] Far funzionare paginazione -->
 <!-- [TODO] Aggiungere pulsante per google maps per ogni evento -->
-<!-- [TODO] Mantenere il check del comune selezionato -->
 <!-- [TODO] Sistemare gli hidden input -->
 <!-- [TODO] Sistemare scroll comuni -->
-
-
 
 <div class="d-flex flex-column align-items-center justify-content-center">
     <div class="row w-100">
@@ -27,9 +24,9 @@
                     <!-- Barra di ricerca eventi -->
                     <div class="row mt-1">
                         <form class="d-flex" id="searchForm" asp-controller="Event" asp-action="Index" method="get">
-                            <input class="form-control form-control-md" type="text" name="searchQuery" placeholder="Cerca evento" value="@ViewBag.searchQuery" aria-label="Cerca evento" />
+                            <input class="form-control form-control-md" type="text" name="searchQuery" style="margin-right: 2px;" placeholder="Cerca evento" value="@ViewBag.searchQuery" aria-label="Cerca evento" />
                             <input type="hidden" name="selectedComune" value="@ViewBag.selectedComune" />
-                            <button class="btn" style="background-color: mediumpurple; color:white;" type="submit">Cerca</button>
+                            <button class="btn" style="background-color: mediumpurple; color:white; margin-left: 2px;" type="submit">Cerca</button>
                         </form>
                     </div>
                 </div>
@@ -120,14 +117,14 @@
 
                     <!-- Barra di ricerca comuni -->
                     <form class="d-flex" id="searchFormComune" asp-controller="Event" asp-action="Index" method="get">
-                        <input class="form-control" type="text" name="filterComune" placeholder="Cerca comune" value="@ViewBag.filterComune" aria-label="Cerca comune" />
+                        <input class="form-control" type="text" name="filterComune" placeholder="Cerca comune" value="@ViewBag.filterComune" aria-label="Cerca comune" style="margin-right: 2px;"/>
 
                         @*
                         <input type="hidden" name="selectedComune" value="@ViewBag.selectedComune" />
                         <input type="hidden" name="searchQuery" value="@ViewBag.searchQuery" />
                         *@
 
-                        <button class="btn" style="background-color: mediumpurple; color:white;" type="submit">Filtra</button>
+                        <button class="btn" style="background-color: mediumpurple; color:white; margin-left: 2px;" type="submit">Filtra</button>
                     </form>
 
                     <hr class="my-2"/>
@@ -136,16 +133,30 @@
                         <div class="d-flex flex-column gap-2">
                             @if (listComuni != null && listComuni.Any())
                             {
+                                @if(ViewBag.selectedComune != "")
+                                {
+                                    <form method="get" asp-controller="Event" asp-action="Index">
+                                        <input type="hidden" name="selectedComune" value="@ViewBag.filterComune" />
+                                        <input type="hidden" name="searchQuery" value="@ViewBag.searchQuery" />
+                                        <input type="hidden" name="filterComune" value="@ViewBag.filterComune" />
+                                        
+                                        <button type="submit" class="btn btn-primary btn-outline-primary w-100 text-start text-white">
+                                            @ViewBag.selectedComune
+                                        </button>
+                                    </form>
+                                }
                                 @foreach (var comune in listComuni)
                                 {
-                                <form method="get" asp-controller="Event" asp-action="Index">
-                                    <input type="hidden" name="selectedComune" value="@comune" />
-                                    <input type="hidden" name="searchQuery" value="@ViewBag.searchQuery" />
-                                    <input type="hidden" name="filterComune" value="@ViewBag.filterComune" />
-                                    <button type="submit" class="btn btn-outline-primary w-100 text-start">
-                                        @comune
-                                    </button>
-                                </form>
+                                    @if (comune == ViewBag.selectedComune) continue;
+                                    <form method="get" asp-controller="Event" asp-action="Index">
+                                        <input type="hidden" name="selectedComune" value="@comune" />
+                                        <input type="hidden" name="searchQuery" value="@ViewBag.searchQuery" />
+                                        <input type="hidden" name="filterComune" value="@ViewBag.filterComune" />
+                                    
+                                        <button type="submit" class="btn btn-outline-primary w-100 text-start">
+                                            @comune
+                                        </button>
+                                    </form>
                                 }
                             } else
                             {
