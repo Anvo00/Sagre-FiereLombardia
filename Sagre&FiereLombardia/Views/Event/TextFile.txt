@@ -1,0 +1,26 @@
+﻿<div class="overflow-y-auto">
+                        <!-- List comuni filtrati -->
+                        <!-- [TODO] Inserire un limite visualizzabile dei comuni e lo scorrimento -->
+                        @if (listComuni != null && listComuni.Any())
+                        {
+                            @foreach (string comune in listComuni)
+                            {
+                                
+                                <button class="btn d-flex" style="background-color:#F7F7F7; border-color: black">@comune</button>
+                            }
+                        }
+                        else
+                        {
+                            <p style="color:red"> Nessun comune trovato </p>
+                        }
+                    </div>
+
+
+
+@if(eventList != null && eventList.Any())
+                    {
+                        @foreach(Event evento in eventList)
+                        {
+                            @evento.NomeEvento
+                        }
+                    }

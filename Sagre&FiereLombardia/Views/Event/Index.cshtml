@@ -1,16 +1,31 @@
 ﻿@{
     var eventList = ViewBag.filteredEvents as List<Event>;
     var listComuni = ViewBag.listComuni as List<string>;
+
+    int pageSize = 9;
+    int pageNumber = 1;
+    int totalPages = eventList != null ? (int)Math.Ceiling((double)ViewBag.nEvent / pageSize) : 0;
+    var paginatedResults = eventList != null ? eventList.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList() : new List<Event>();
+
 }
+
+<!-- [TODO] Far funzionare paginazione -->
+<!-- [TODO] Aggiungere pulsante per google maps per ogni evento -->
+<!-- [TODO] Mantenere il check del comune selezionato -->
+<!-- [TODO] Sistemare gli hidden input -->
+<!-- [TODO] Sistemare scroll comuni -->
+
+
+
 <div class="d-flex flex-column align-items-center justify-content-center">
     <div class="row w-100">
 
         @* Sezione eventi *@
-        <div class="col-8 mt-4 bg-dark">
-            <div class="card mt-2">
-                <div class="card-header">
+        <div class="col-8 mt-4">
+            <div class="card mt-2" style="min-height:51.5rem; max-height:51.5rem">
+                <div class="card-header" style="min-height:63px; max-height:63px">
                     <!-- Barra di ricerca eventi -->
-                    <div class="row mt-2">
+                    <div class="row mt-1">
                         <form class="d-flex" id="searchForm" asp-controller="Event" asp-action="Index" method="get">
                             <input class="form-control form-control-md" type="text" name="searchQuery" placeholder="Cerca evento" value="@ViewBag.searchQuery" aria-label="Cerca evento" />
                             <input type="hidden" name="selectedComune" value="@ViewBag.selectedComune" />
@@ -18,26 +33,86 @@
                         </form>
                     </div>
                 </div>
-                <div class="card-body">
-                    <!-- Griglia eventi filtrati -->
-                    @if(eventList != null && eventList.Any())
-                    {
-                        @foreach(Event evento in eventList)
-                        {
-                            @evento.NomeEvento
-                        }
-                    }
 
+                <div class="card-body" style="min-height:41rem">
+                    <!-- Griglia eventi filtrati -->
+                    
+                    @if (paginatedResults.Any())
+                    {
+                        <div class="row row-cols-3 g-4">
+                            @foreach(var evento in paginatedResults)
+                            {
+                                <div class="col">
+                                    <div class="card" style="max-width: 18rem; min-height: 12rem; max-height: 12rem">
+                                        <div class="card-body">
+                                            <h5 class="card-title">@evento.NomeEvento</h5>
+                                            <h6 class="card-subtitle mb-2 text-body-secondary">Ediz. n°@evento.Edizione</h6>
+                                            <!-- [TODO] Effettua trim per togliere l'orario -->
+                                            <p class="card-text">Inizio: @evento.DataInizio.Value.ToString("dd/MM/yyyy") <br /> 
+                                                Fine: @evento.DataFine.Value.ToString("dd/MM/yyyy")</p>
+                                            <!-- [TODO FACOLTATIVO] Vedere se è possibile mettere i link alla stessa altezza -->
+                                            <a href="#" class="card-link">Card link</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    } else
+                    {
+                        <p style="color:red">Nessun evento trovato!</p>
+                    }
+                    
                 </div>
+
+                <hr />
+
+                @* Paginazione *@
+                @if(totalPages > 1 && paginatedResults.Any())
+                {
+                    int blockSize = 3;
+                    var currentBlock = (pageNumber - 1) / blockSize;
+                    var startPage = currentBlock * blockSize + 1;
+                    var endPage = Math.Min(startPage + blockSize - 1, totalPages);
+
+                    <nav class="mt-2" aria-label="Page navigation">
+                        <ul class="pagination justify-content-center mb-4">
+                            <!-- Pulsante pagina precedente -->
+                            <li class="page-item">
+                                <a class="page-link" href="?pageNumber=@(pageNumber - 1)&searchQuery=@ViewBag.searchQuery&filterComune=@ViewBag.filterComune&selectedComune=@ViewBag.selectedComune">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+
+                            <!-- Blocchi da 3 pagine -->
+                            @for(int i = startPage; i <= endPage; i++)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="?pageNumber=@i&searchQuery=@ViewBag.searchQuery&filterComune=@ViewBag.filterComune&selectedComune=@ViewBag.selectedComune">
+                                       @i
+                                    </a>
+                                </li>
+
+                                pageNumber = @i;
+                            }
+
+                            <!-- Pulsante pagina successiva -->
+                            <li class="page-item">
+                                <a class="page-link" href="?pageNumber=@(pageNumber + 1)&searchQuery=@ViewBag.searchQuery&filterComune=@ViewBag.filterComune&selectedComune=@ViewBag.selectedComune">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </lI>
+                        </ul>
+                    </nav>
+                }
             </div>
         </div>
 
         
 
         @* Sezione comuni *@
-        <div class="col mt-4 bg-dark">
+        <div class="col mt-4">
 
-            <div class="card mt-2">
+            <div class="card mt-2" style="min-height:51.5rem; max-height:51.5rem">
                 <div class="card-header">
                     <h2>Comuni</h2>
                 </div>
@@ -47,38 +122,52 @@
                     <form class="d-flex" id="searchFormComune" asp-controller="Event" asp-action="Index" method="get">
                         <input class="form-control" type="text" name="filterComune" placeholder="Cerca comune" value="@ViewBag.filterComune" aria-label="Cerca comune" />
 
-                        <!-- [TODO] Capire se mettere queste linee di codice -->
-                        <!-- <input type="hidden" name="selectedComune" value="@ViewBag.selectedComune" /> -->
-                        <!-- <input type="hidden" name="searchQuery" value="@ViewBag.searchQuery" /> -->
+                        @*
+                        <input type="hidden" name="selectedComune" value="@ViewBag.selectedComune" />
+                        <input type="hidden" name="searchQuery" value="@ViewBag.searchQuery" />
+                        *@
 
                         <button class="btn" style="background-color: mediumpurple; color:white;" type="submit">Filtra</button>
                     </form>
 
-                    <div>
-                        <!-- List comuni filtrati -->
-                        <!-- [TODO] Inserire un limite visualizzabile dei comuni e lo scorrimento -->
-                        @if (listComuni != null && listComuni.Any())
-                        {
-                            @foreach (string comune in listComuni)
+                    <hr class="my-2"/>
+
+                    <div class="overflow-scroll">
+                        <div class="d-flex flex-column gap-2">
+                            @if (listComuni != null && listComuni.Any())
                             {
-                                <p>@comune</p>
+                                @foreach (var comune in listComuni)
+                                {
+                                <form method="get" asp-controller="Event" asp-action="Index">
+                                    <input type="hidden" name="selectedComune" value="@comune" />
+                                    <input type="hidden" name="searchQuery" value="@ViewBag.searchQuery" />
+                                    <input type="hidden" name="filterComune" value="@ViewBag.filterComune" />
+                                    <button type="submit" class="btn btn-outline-primary w-100 text-start">
+                                        @comune
+                                    </button>
+                                </form>
+                                }
+                            } else
+                            {
+                                <p style="color:red"> Nessun comune trovato! </p>
                             }
-                        }
-                        else
-                        {
-                            <p style="color:red"> Nessun comune trovato </p>
-                        }
-                    </div>
+
+                        </div>
+                    </div>      
                     
+                    <hr class="my-2"/> 
+
+                    <form asp-controller="Event" asp-action="Index" method="get">
+                        <input type="hidden" name="selectedComune" value="" />
+                        <input type="hidden" name="searchQuery" value="@ViewBag.searchQuery" />
+                        <input type="hidden" name="filterComune" value="@ViewBag.filterComune" />
+                        <button type="submit" class="btn btn-outline-primary w-100 text-start">
+                            Reset
+                        </button>
+                    </form>
                 </div>
-            </div>
-
-            
-            
-                 
-            
-
-            
+                
+            </div>            
         </div>
     </div>
 </div>

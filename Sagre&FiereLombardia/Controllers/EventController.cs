@@ -33,7 +33,6 @@ namespace Sagre_FiereLombardia.Controllers
 
                 // TODO Contare gli eventi per mettere un limite di visualizzazione (pagine come google)
                 int nEvent = events.Count;
-                // ...
 
                 // Popolazione della lista dei comuni con tutti i comuni disponibili nel dataset
                 // TODO Mettere un massimo di comuni visualizzati nella lista
@@ -74,7 +73,8 @@ namespace Sagre_FiereLombardia.Controllers
                 // Salva i parametri nella ViewBag
                 ViewBag.searchQuery = searchQuery;
                 ViewBag.selectedComune = selectedComune;
-                ViewBag.filterComune = filterComune; // Serve??
+                ViewBag.filterComune = filterComune;
+                ViewBag.nEvent = nEvent;
 
                 return View();
 
