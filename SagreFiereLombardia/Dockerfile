@@ -10,19 +10,19 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Sagre&FiereLombardia/Sagre&FiereLombardia.csproj", "Sagre&FiereLombardia/"]
-RUN dotnet restore "./Sagre&FiereLombardia/Sagre&FiereLombardia.csproj"
+COPY ["SagreFiereLombardia/SagreFiereLombardia.csproj", "SagreFiereLombardia/"]
+RUN dotnet restore "./SagreFiereLombardia/SagreFiereLombardia.csproj"
 COPY . .
-WORKDIR "/src/Sagre&FiereLombardia"
-RUN dotnet build "./Sagre&FiereLombardia.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/SagreFiereLombardia"
+RUN dotnet build "./SagreFiereLombardia.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # Questa fase viene usata per pubblicare il progetto di servizio da copiare nella fase finale
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Sagre&FiereLombardia.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./SagreFiereLombardia.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # Questa fase viene usata nell'ambiente di produzione o durante l'esecuzione da Visual Studio in modalità normale (impostazione predefinita quando non si usa la configurazione di debug)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Sagre&FiereLombardia.dll"]
+ENTRYPOINT ["dotnet", "SagreFiereLombardia.dll"]
