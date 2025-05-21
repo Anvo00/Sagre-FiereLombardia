@@ -3,24 +3,26 @@
     var listComuni = ViewBag.listComuni as List<string>;
 
     int pageSize = 9;
-    int pageNumber = 1;
+    int pageNumber = ViewBag.pageNumber ?? 1;
     int totalPages = eventList != null ? (int)Math.Ceiling((double)ViewBag.nEvent / pageSize) : 0;
     var paginatedResults = eventList != null ? eventList.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList() : new List<Event>();
 
 }
 
-<!-- [TODO] Far funzionare paginazione -->
-<!-- [TODO] Sistemare gli hidden input -->
+<style>
+    .custom-purple-btn {
+    color: mediumpurple;
+    border-color: mediumpurple;
+    transition: background-color 0.3s, color 0.3s;
+}
 
-<!-- [TODO] Aggiungere pulsante per google maps per ogni evento -->
-<!-- [TODO] Sistemare titoli eventi (se più lunghi di tot righe allora metti i 3 punti di sospensione ? -->
+.custom-purple-btn:hover {
+    background-color: mediumpurple;
+    color: white
+}
+</style>
+
 <!-- [TODO FACOLTATIVO] Inserire una "X" nella barra di ricerca per resettare il filtro di ricerca -->
-
-<!-- [TODO FACOLTATIVO riga:53] Vedere se è possibile mettere i link alla stessa altezza (SPOILER: Sembra impossibile)-->
-<!-- [TODO FACOLTATIVO riga:141] Racchiudere la scritta in un rettangolo colorato -->
-
-<!-- [ALERT riga:166] C'è un bug per i comuni: se scrivo qualcosa nella barra di ricerca e seleziono un comune mi dice quale ho selezionato,
-     nel momento in cui vado a cliccare sulla x allora mi dice che il comune che ho selezionato è uguale alla barra di ricerca. [RISOLVERE BUG] -->
 
 
 <div class="d-flex flex-column align-items-center justify-content-center">
@@ -32,9 +34,10 @@
                 <div class="card-header" style="min-height:63px; max-height:63px">
                     <!-- Barra di ricerca eventi -->
                     <div class="row mt-1">
-                        <form class="d-flex" id="searchForm" asp-controller="Event" asp-action="Index" method="get">
-                            <input class="form-control form-control-md" type="text" name="searchQuery" style="margin-right: 2px;" placeholder="Cerca evento" value="@ViewBag.searchQuery" aria-label="Cerca evento" />
+                        <form class="d-flex align-items-center w-100" id="searchForm" asp-controller="Event" asp-action="Index" method="get">
+                            <input id="searchBar" class="form-control form-control-md" type="text" name="searchQuery" style="margin-right: 2px;" placeholder="Cerca evento" value="@ViewBag.searchQuery" aria-label="Cerca evento" />
                             <input type="hidden" name="selectedComune" value="@ViewBag.selectedComune" />
+                            <input type="hidden" name="filterComune" value="@ViewBag.filterComune" />
                             <button class="btn" style="background-color: mediumpurple; color:white; margin-left: 2px;" type="submit">Cerca</button>
                         </form>
                     </div>
@@ -49,13 +52,20 @@
                             @foreach(var evento in paginatedResults)
                             {
                                 <div class="col">
-                                    <div class="card" style="max-width: 18rem; min-height: 12rem; max-height: 12rem">
-                                        <div class="card-body">
-                                            <h5 class="card-title">@evento.NomeEvento</h5>
+                                    <div class="card position-relative" style="width: 15.7rem; height:12rem">
+                                        <div class="card-body" style="height:100%">
+                                            <h6 class="card-title fw-bold" style="color:mediumpurple">@evento.NomeEvento</h6>
                                             <h6 class="card-subtitle mb-2 text-body-secondary">Ediz. @evento.Edizione</h6>
                                             <p class="card-text">Inizio: @evento.DataInizio.Value.ToString("dd/MM/yyyy") <br /> 
                                                 Fine: @evento.DataFine.Value.ToString("dd/MM/yyyy")</p>
-                                            <a href="#" class="card-link">Map</a>
+
+                                            <div>
+                                                <a href="https://www.google.com/maps/search/?q=@evento.Toponimo+@evento.Indirizzo,+@evento.Comune" target="_blank" class="btn btn-outline rounded-circle p-2 lh-1 position-absolute custom-purple-btn" style="bottom: 10px; right: 10px;">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
+                                                        <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+                                                    </svg>
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -71,43 +81,75 @@
                 <hr />
 
                 @* Paginazione *@
-                @if(totalPages > 1 && paginatedResults.Any())
+                @if(!(totalPages < 1) && paginatedResults.Any())
                 {
                     int blockSize = 3;
-                    var currentBlock = (pageNumber - 1) / blockSize;
-                    var startPage = currentBlock * blockSize + 1;
-                    var endPage = Math.Min(startPage + blockSize - 1, totalPages);
+                    int halfBlock = blockSize / 2;
+                    var startPage =  Math.Max(1, pageNumber - halfBlock);
+                    var endPage = Math.Min(totalPages, startPage + blockSize - 1);
+
+                    if (endPage - startPage + 1 < blockSize) {
+                        startPage = Math.Max(1, endPage - blockSize + 1);
+                    }
 
                     <nav class="mt-2" aria-label="Page navigation">
                         <ul class="pagination justify-content-center mb-4">
+                            <!-- Pulsante prima pagina -->
+                            <li class="page-item @(pageNumber == 1 ? "disabled" : "")">
+                                <a class="page-link" href="?pageNumber=1&searchQuery=@ViewBag.searchQuery&filterComune=@ViewBag.filterComune&selectedComune=@ViewBag.selectedComune">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-chevron-double-left" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
+                                        <path fill-rule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
+                                    </svg>
+                                </a>
+                            </li>
+
                             <!-- Pulsante pagina precedente -->
-                            <li class="page-item">
+                            <li class="page-item @(pageNumber == 1 ? "disabled" : "")">
                                 <a class="page-link" href="?pageNumber=@(pageNumber - 1)&searchQuery=@ViewBag.searchQuery&filterComune=@ViewBag.filterComune&selectedComune=@ViewBag.selectedComune">
-                                    <span aria-hidden="true">&laquo;</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
+                                    </svg>
                                 </a>
                             </li>
 
                             <!-- Blocchi da 3 pagine -->
                             @for(int i = startPage; i <= endPage; i++)
                             {
-                                <li class="page-item">
-                                    <a class="page-link" href="?pageNumber=@i&searchQuery=@ViewBag.searchQuery&filterComune=@ViewBag.filterComune&selectedComune=@ViewBag.selectedComune">
-                                       @i
-                                    </a>
-                                </li>
+                                @if(eventList.Skip((i - 1) * pageSize).Take(pageSize).Any())
+                                {
+                                    <li class="page-item @(i == pageNumber ? "active" : "")">
+                                        <a class="page-link" href="?pageNumber=@i&searchQuery=@ViewBag.searchQuery&filterComune=@ViewBag.filterComune&selectedComune=@ViewBag.selectedComune">
+                                            @i
+                                        </a>
+                                    </li>
+                                }
 
-                                pageNumber = @i;
                             }
 
                             <!-- Pulsante pagina successiva -->
-                            <li class="page-item">
+                            <li class="page-item @(pageNumber == totalPages ? "disabled" : "")">
                                 <a class="page-link" href="?pageNumber=@(pageNumber + 1)&searchQuery=@ViewBag.searchQuery&filterComune=@ViewBag.filterComune&selectedComune=@ViewBag.selectedComune">
-                                    <span aria-hidden="true">&raquo;</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/>
+                                    </svg>
+                                </a>
+                            </lI>
+
+                            <!-- Pulsante ultima pagina -->
+                            <li class="page-item @(pageNumber == totalPages ? "disabled" : "")">
+                                <a class="page-link" href="?pageNumber=@totalPages&searchQuery=@ViewBag.searchQuery&filterComune=@ViewBag.filterComune&selectedComune=@ViewBag.selectedComune">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-chevron-double-right" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708"/>
+                                        <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708"/>
+                                    </svg>
                                 </a>
                             </lI>
                         </ul>
                     </nav>
                 }
+
+
             </div>
         </div>
 
@@ -125,11 +167,8 @@
                     <!-- Barra di ricerca comuni -->
                     <form class="d-flex" id="searchFormComune" asp-controller="Event" asp-action="Index" method="get">
                         <input class="form-control" type="text" name="filterComune" placeholder="Cerca comune" value="@ViewBag.filterComune" aria-label="Cerca comune" style="margin-right: 2px;"/>
-
-                        @*
                         <input type="hidden" name="selectedComune" value="@ViewBag.selectedComune" />
                         <input type="hidden" name="searchQuery" value="@ViewBag.searchQuery" />
-                        *@
 
                         <button class="btn" style="background-color: mediumpurple; color:white; margin-left: 2px;" type="submit">Filtra</button>
                     </form>
@@ -137,9 +176,6 @@
                     @if(!string.IsNullOrWhiteSpace(ViewBag.selectedComune))
                     {
                         <form class="d-flex" asp-controller="Event" asp-action="Index" method="get">
-                            <input type="hidden" name="selectedComune" value="@ViewBag.filterComune" />
-                            <input type="hidden" name="searchQuery" value="@ViewBag.searchQuery" />
-                            <input type="hidden" name="filterComune" value="@ViewBag.filterComune" />
                             
                             <div class="mt-4">
                                 <h5>Hai selezionato il comune: <br /> </h5>
@@ -171,12 +207,12 @@
                                         
                                         @if(comune == ViewBag.selectedComune)
                                         {
-                                            <button type="submit" class="btn btn-primary w-100 text-start">
+                                            <button type="submit" class="btn btn-primary w-100 text-start disabled" style="background-color:mediumpurple; border-color:mediumpurple">
                                                 @comune
                                             </button>
                                         } else
                                         {
-                                            <button type="submit" class="btn btn-outline-primary w-100 text-start">
+                                            <button type="submit" class="btn w-100 text-start custom-purple-btn">
                                                 @comune
                                             </button>
                                         }

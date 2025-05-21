@@ -22,7 +22,7 @@ namespace Sagre_FiereLombardia.Controllers
         }
 
         // Mostra tutti gli eventi
-        public IActionResult Index(string searchQuery = "", string filterComune = "", string selectedComune = "")
+        public IActionResult Index(string searchQuery = "", string filterComune = "", string selectedComune = "", int pageNumber = 1)
         {
 
             try
@@ -30,9 +30,6 @@ namespace Sagre_FiereLombardia.Controllers
 
                 // Popolazione della lista degli eventi con tutti gli eventi disponibili nel dataset
                 events = _lEventService.GetAllEvents();
-
-                // TODO Contare gli eventi per mettere un limite di visualizzazione (pagine come google)
-                int nEvent = events.Count;
 
                 // Popolazione della lista dei comuni con tutti i comuni disponibili nel dataset
                 // TODO Mettere un massimo di comuni visualizzati nella lista
@@ -65,6 +62,10 @@ namespace Sagre_FiereLombardia.Controllers
                     events = events.Where(e =>
                         e.NomeEvento.Replace(" ", "").StartsWith(searchQuery.Replace(" ", ""), StringComparison.OrdinalIgnoreCase)).ToList();
                 }
+
+                // TODO Contare gli eventi per mettere un limite di visualizzazione (pagine come google)
+                int nEvent = events.Count;
+                ViewBag.pageNumber = pageNumber;
 
                 // Salva i risultati filtrati nella ViewBag
                 ViewBag.filteredEvents = events;
