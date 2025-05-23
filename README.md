@@ -59,10 +59,10 @@ L'intero progetto è containerizzato con Docker per garantire portabilità e fac
 ## 🐳 Docker
    1. **Creare l'immagine Docker:**
       ```bash
-      docker build -t sagreFiereLombardia/web -f \Dockerfile\ ..
+      docker build -t sagrefierelombardia_web -f .\Dockerfile ..
    2. **Eseguire il container Docker:**
       ```bash
-      docker run -d --name sagreFiereLombardia/web -p 8080:80 sagreFiereLombardia/web
+      docker run -d --name sagrefierelombardia_web -p 8080:80 sagrefierelombardia_web
    
    Il servizio Docker sarà accessibile all'indirizzo [http://localhost:8080](http://localhost:8080).
 
