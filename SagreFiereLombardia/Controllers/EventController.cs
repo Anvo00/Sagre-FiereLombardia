@@ -32,7 +32,6 @@ namespace Sagre_FiereLombardia.Controllers
                 events = _lEventService.GetAllEvents();
 
                 // Popolazione della lista dei comuni con tutti i comuni disponibili nel dataset
-                // TODO Mettere un massimo di comuni visualizzati nella lista
 
                 listComuni = events.Select(e => e.Comune).Distinct().ToList();
                 // Alternativa con foreach (commentato)
@@ -63,7 +62,6 @@ namespace Sagre_FiereLombardia.Controllers
                         e.NomeEvento.Replace(" ", "").StartsWith(searchQuery.Replace(" ", ""), StringComparison.OrdinalIgnoreCase)).ToList();
                 }
 
-                // TODO Contare gli eventi per mettere un limite di visualizzazione (pagine come google)
                 int nEvent = events.Count;
                 ViewBag.pageNumber = pageNumber;
 
@@ -83,7 +81,6 @@ namespace Sagre_FiereLombardia.Controllers
             catch (Exception ex)
             {
 
-                // Codice preso dal progetto degli altri - CONTROLLARE!!!
                 ViewBag.Error = "Si è verificato un errore imprevisto: " + ex.Message;
                 ViewBag.filteredEvents = new List<Event>();
                 ViewBag.listComuni = new List<string>();
